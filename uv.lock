@@ -86,7 +86,7 @@ wheels = [
 [[package]]
 name = "mazegenerator"
 version = "2.0.1"
-source = { path = "mazegenerator-00001-py3-none-any.whl" }
+source = { path = "dependencies/mazegenerator-1-py3-none-any.whl" }
 wheels = [
     { filename = "mazegenerator-1-py3-none-any.whl", hash = "sha256:9d3903ad098f73c459fc34c59d6756452786477436ef477e7e96f459de70f1f4" },
 ]
@@ -161,7 +161,7 @@ dependencies = [
 requires-dist = [
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "flake8", specifier = ">=7.3.0" },
-    { name = "mazegenerator", path = "mazegenerator-00001-py3-none-any.whl" },
+    { name = "mazegenerator", path = "dependencies/mazegenerator-1-py3-none-any.whl" },
     { name = "mypy", specifier = ">=1.20.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
 ]
