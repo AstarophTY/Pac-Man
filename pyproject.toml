@@ -11,7 +11,12 @@ dependencies = [
     "mypy>=1.20.0",
     "pydantic>=2.12.5",
     "mazegenerator",
+    "ursina>=8.3.0",
 ]
 
 [tool.uv.sources]
 mazegenerator = { path = "dependencies/mazegenerator-2.0.1-py3-none-any.whl" }
+
+[[tool.mypy.overrides]]
+module = "ursina.*"
+ignore_missing_imports = true
