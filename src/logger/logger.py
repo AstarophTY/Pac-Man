@@ -1,6 +1,10 @@
 from .color import Color
 from sys import stderr
 import os
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 
 class Logger:
