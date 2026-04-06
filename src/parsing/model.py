@@ -1,6 +1,4 @@
-from pydantic import BaseModel, Field, ValidationError, model_serializer, field_validator, ConfigDict
-from typing import Optional
-from random import randint
+from pydantic import BaseModel, Field, field_validator, ConfigDict
 
 from ..logger import Logger
 
@@ -47,10 +45,12 @@ class ConfigModel(BaseModel):
             "}\n"
         )
 
-    @field_validator("width", "height", "lives", "pacgum",
-                    "points_per_pacgum", "points_per_super_pacgum",
-                    "points_per_ghost", "level_max_time",
-                    mode="before")
+    @field_validator(
+        "width", "height", "lives", "pacgum",
+        "points_per_pacgum", "points_per_super_pacgum",
+        "points_per_ghost", "level_max_time",
+        mode="before"
+    )
     @classmethod
     def validate_positive(cls, v, info):
         field_name = info.field_name
@@ -76,7 +76,7 @@ class ConfigModel(BaseModel):
 
         try:
             return int(v)
-        except:
+        except Exception:
             Logger.warning("'seed' invalid, using default (42)")
             return 42
 
