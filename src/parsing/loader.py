@@ -17,7 +17,7 @@ class ConfigLoader:
             Logger.warning(Logger.remove_errno(str(e)))
             return {}
 
-        content = re.sub(r"//.*", "", content)
+        content = re.sub(r"(\/\/.*|\/\*[\s\S]*?\*\/)", "", content)
 
         try:
             return json.loads(content)
