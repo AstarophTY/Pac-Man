@@ -9,6 +9,16 @@ def get_walls(val: int) -> None:
         "WEST": bits[0] == '1',
     }
 
+def create_walls(y, x, walls: dict):
+
+    if walls.get('NORTH') is True:
+        Entity(model='cube', position=(x,0,y-0.45), color=color.gray, scale=(1,1,0.1))
+    if walls.get('SOUTH') is True:
+        Entity(model='cube', position=(x,0,y+0.45), color=color.gray, scale=(1,1,0.1))
+    if walls.get('EAST') is True:
+        Entity(model='cube', position=(x+0.45,0,y), color=color.gray, scale=(0.1,1,1))
+    if walls.get('WEST') is True:
+        Entity(model='cube', position=(x-0.45,0,y), color=color.gray, scale=(0.1,1,1))
 
 def render(maze: list, width, height):
     app = Ursina()
@@ -23,9 +33,7 @@ def render(maze: list, width, height):
 
     for y in range(len(maze)):
         for x in range(len(maze[y])):
-            if (maze[y][x] == 15):
-                Entity(model='cube', position=(x,1,y), color=color.gray)
-            print(get_walls(maze[y][x]))
+            create_walls(y,x, get_walls(maze[y][x]))
     return app
 
 
