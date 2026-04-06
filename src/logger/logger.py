@@ -26,17 +26,17 @@ class Logger:
         return target >= current
 
     @classmethod
-    def info(cls, message: str):
+    def info(cls, message: str) -> None:
         if cls._get_log_level("INFO"):
             print(f"[{Color.BLUE}{Color.BOLD}INFO{Color.RESET}] {message}")
 
     @classmethod
-    def success(cls, message: str):
+    def success(cls, message: str) -> None:
         if cls._get_log_level("SUCCESS"):
             print(f"[{Color.GREEN}{Color.BOLD}SUCCESS{Color.RESET}] {message}")
 
     @classmethod
-    def warning(cls, message: str):
+    def warning(cls, message: str) -> None:
         if cls._get_log_level("WARNING"):
             print(
                 f"[{Color.YELLOW}{Color.BOLD}WARNING{Color.RESET}] {message}",
@@ -44,7 +44,7 @@ class Logger:
             )
 
     @classmethod
-    def error(cls, message: str):
+    def error(cls, message: str) -> None:
         if cls._get_log_level("ERROR"):
             print(
                 f"[{Color.RED}{Color.BOLD}ERROR{Color.RESET}] {message}",
@@ -52,7 +52,7 @@ class Logger:
             )
 
     @classmethod
-    def debug(cls, message: str):
+    def debug(cls, message: str) -> None:
         if cls._get_log_level("DEBUG"):
             print(
                 f"[{Color.MAGENTA}{Color.BOLD}DEBUG{Color.RESET}] {message}",
