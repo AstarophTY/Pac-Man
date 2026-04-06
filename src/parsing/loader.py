@@ -3,7 +3,6 @@ import json
 import re
 from typing import Any
 
-from .errors import ParsingError
 from ..logger import Logger
 from .model import ConfigModel
 
@@ -25,7 +24,6 @@ class ConfigLoader:
         except json.JSONDecodeError as e:
             Logger.warning(f"Error decoding JSON from {file_path}: {e}")
             return {}
-
 
     @staticmethod
     def load_config(file_path: str) -> ConfigModel:
