@@ -26,8 +26,11 @@ class ConfigLoader:
             return {}
 
     @staticmethod
-    def load_config(file_path: str) -> ConfigModel:
-        content = ConfigLoader._loadfile(file_path)
+    def load_config(file_path: str | None) -> ConfigModel:
+        if file_path:
+            content = ConfigLoader._loadfile(file_path)
+        else:
+            content = {}
 
         Logger.debug(f"Config loaded: {json.dumps(content, indent=2)}")
 
