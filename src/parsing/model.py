@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, field_validator, ConfigDict
+from typing import Any
 
 from ..logger import Logger
 
@@ -52,7 +53,7 @@ class ConfigModel(BaseModel):
         mode="before"
     )
     @classmethod
-    def _validate_positive(cls, v, info):
+    def _validate_positive(cls, v: Any, info: Any) -> Any:
         field_name = info.field_name
 
         try:
@@ -69,7 +70,7 @@ class ConfigModel(BaseModel):
 
     @field_validator("seed", mode="before")
     @classmethod
-    def _seed_validator(cls, v):
+    def _seed_validator(cls, v: Any) -> Any:
         if v is None:
             Logger.warning("'seed' not provided, using default (42)")
             return 42
@@ -82,7 +83,7 @@ class ConfigModel(BaseModel):
 
     @field_validator("level", mode="before")
     @classmethod
-    def _validate_levels(cls, v):
+    def _validate_levels(cls, v: Any) -> Any:
         if not isinstance(v, list) or len(v) == 0:
             Logger.warning("'level' invalid, using default levels")
             return cls.model_fields["level"].default
@@ -90,7 +91,7 @@ class ConfigModel(BaseModel):
 
     @field_validator("highscore_filename", mode="before")
     @classmethod
-    def _validate_string(cls, v):
+    def _validate_string(cls, v: Any) -> Any:
         if not isinstance(v, str):
             Logger.warning("'highscore_filename' invalid, using default")
             return cls.model_fields["highscore_filename"].default
