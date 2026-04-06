@@ -1,7 +1,9 @@
-from .color import Color
 from sys import stderr
 import os
 from dotenv import load_dotenv
+import re
+
+from .color import Color
 
 
 load_dotenv()
@@ -58,3 +60,7 @@ class Logger:
                 f"[{Color.MAGENTA}{Color.BOLD}DEBUG{Color.RESET}] {message}",
                 file=stderr
             )
+
+    @staticmethod
+    def remove_errno(message: str) -> str:
+        return re.sub(r"\[Errno \d+\]\s*", "", str(message))
