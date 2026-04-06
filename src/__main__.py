@@ -2,6 +2,7 @@ from sys import argv
 from pathlib import Path
 
 from .logger import Logger
+from .parsing import ConfigLoader
 
 
 def _get_path() -> Path:
@@ -29,6 +30,14 @@ def main():
         return
 
     Logger.info(f"Path provided: {path}")
+
+    try:
+        config = ConfigLoader.load_config(path)
+    except Exception as e:
+        Logger.error(f"Error loading config: {e}")
+        return
+
+    Logger.debug(config)
 
 
 if __name__ == "__main__":
