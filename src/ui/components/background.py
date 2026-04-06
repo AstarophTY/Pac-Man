@@ -1,120 +1,87 @@
-from __future__ import annotations
+import math
 
-from dataclasses import dataclass
-
-from ursina import Entity, Sprite, camera, color, time
-
-
-@dataclass
-class _AnimatedSprite:
-    entity: Sprite
-    texture: str
-    row: int
-    frame: int
-    columns: int
-    rows: int
-
-
-@dataclass
-class _SpriteLane:
-    sprites: list[_AnimatedSprite]
-    speed: float
-    spacing: float
+from ursina import Entity, camera, color as colors, time
 
 
 class PacmanBackground(Entity):
     def __init__(self) -> None:
         super().__init__(parent=camera.ui)
 
-        self._track_rows: list[_SpriteLane] = []
-        self._frame_timer = 0.0
-        self._frame_interval = 0.12
-        self._pacman_sheet = "assets/sprites/PacManAssets-PacMan.png"
+        self._t = 0.0
+        self._blue_lines: list[Entity] = []
+        self._blue_line_base_y: list[float] = []
 
         Entity(
             parent=self,
             model="quad",
-            color=color.rgb(0.04, 0.06, 0.12),
+            color=colors.rgb(0.043, 0.071, 0.133),
             scale=(2.4, 1.4),
             z=2,
         )
 
-        self._create_sprite_lanes()
+        Entity(
+            parent=self,
+            model="quad",
+            color=colors.rgba(0.078, 0.161, 0.239, 0.188),
+            y=0.24,
+            scale=(2.4, 0.62),
+            z=1.95,
+        )
 
-    def _create_sprite_lanes(self) -> None:
-        lane_y = [0.24, 0.02, -0.20]
-        lane_speed = [0.24, 0.28, 0.22]
-        spacing = 0.28
-        sprites_per_lane = 10
+        self._create_blue_bands()
+        self._create_blue_separators()
 
-        lane_config = [(self._pacman_sheet, 0, 4, 3)]
-
-        for lane_index, y in enumerate(lane_y):
-            lane_entities: list[_AnimatedSprite] = []
-            texture_path, sprite_row, columns, rows = lane_config[0]
-
-            for i in range(sprites_per_lane):
-                sprite = Sprite(
-                    parent=self,
-                    texture=texture_path,
-                    x=-1.3 + i * spacing,
-                    y=y,
-                    z=1.6,
-                    scale_x=0.09,
-                    scale_y=0.09,
-                    color=color.rgb(1.0, 1.0, 1.0),
-                )
-                animated_sprite = _AnimatedSprite(
-                    entity=sprite,
-                    texture=texture_path,
-                    row=sprite_row,
-                    frame=i % columns,
-                    columns=columns,
-                    rows=rows,
-                )
-                self._apply_frame(animated_sprite)
-                lane_entities.append(animated_sprite)
-
-            self._track_rows.append(
-                _SpriteLane(
-                    sprites=lane_entities,
-                    speed=lane_speed[lane_index],
-                    spacing=spacing,
-                )
-            )
+        self._sweep_band = Entity(
+            parent=self,
+            model="quad",
+            y=0.72,
+            z=1.88,
+            scale=(2.4, 0.048),
+            color=colors.rgba(0.380, 0.820, 1.000, 0.090),
+        )
 
     def update(self) -> None:
-        self._frame_timer += time.dt
+        self._t += time.dt
+        self._animate_blue_bands()
 
-        for row in self._track_rows:
-            for animated in row.sprites:
-                animated.entity.x -= row.speed * time.dt
+    def _create_blue_bands(self) -> None:
+        for i in range(34):
+            base_y = 0.66 - (i * 0.041)
+            line = Entity(
+                parent=self,
+                model="quad",
+                y=base_y,
+                z=1.90,
+                scale=(2.4, 0.0036),
+                color=colors.rgba(
+                    0.160,
+                    0.490,
+                    0.690,
+                    0.090 + ((i % 3) * 0.016),
+                ),
+            )
+            self._blue_lines.append(line)
+            self._blue_line_base_y.append(base_y)
 
-            if not row.sprites:
-                continue
+    def _create_blue_separators(self) -> None:
+        for y in (0.13, -0.09):
+            Entity(
+                parent=self,
+                model="quad",
+                y=y,
+                z=1.84,
+                scale=(2.4, 0.008),
+                color=colors.rgba(0.298, 0.820, 1.000, 0.275),
+            )
 
-            rightmost_x = max(animated.entity.x for animated in row.sprites)
-            for animated in row.sprites:
-                if animated.entity.x < -1.35:
-                    animated.entity.x = rightmost_x + row.spacing
-                    rightmost_x = animated.entity.x
+    def _animate_blue_bands(self) -> None:
+        self._sweep_band.y = 0.74 - ((self._t * 0.35) % 1.52)
+        pulse_alpha = 0.085 + (math.sin(self._t * 10.0) * 0.020)
+        self._sweep_band.color = colors.rgba(0.380, 0.820, 1.000, pulse_alpha)
 
-        if self._frame_timer >= self._frame_interval:
-            self._frame_timer = 0.0
-            self._animate_rows()
-
-    def _animate_rows(self) -> None:
-        for row in self._track_rows:
-            for animated in row.sprites:
-                animated.frame = (animated.frame + 1) % animated.columns
-                self._apply_frame(animated)
-
-    def _apply_frame(self, animated: _AnimatedSprite) -> None:
-        frame_w = 1.0 / animated.columns
-        frame_h = 1.0 / animated.rows
-        offset_x = animated.frame * frame_w
-        offset_y = 1.0 - (animated.row + 1) * frame_h
-
-        animated.entity.texture = animated.texture
-        animated.entity.texture_scale = (frame_w, frame_h)
-        animated.entity.texture_offset = (offset_x, offset_y)
+        drift = (self._t * 0.011) % 1.394
+        for i, line in enumerate(self._blue_lines):
+            y = self._blue_line_base_y[i] - drift
+            if y < -0.74:
+                y += 1.394
+            line.y = y
