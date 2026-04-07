@@ -2,6 +2,7 @@ from sys import argv
 
 from .logger import Logger
 from .parsing import ConfigLoader
+from .ui.menu import run_main_menu
 
 
 def main() -> None:
@@ -24,6 +25,8 @@ def main() -> None:
         return
 
     Logger.debug(str(config))
+
+    run_main_menu(config.highscore)
 
 
 if __name__ == "__main__":
