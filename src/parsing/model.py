@@ -1,5 +1,12 @@
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import (
+    BaseModel,
+    Field,
+    field_validator,
+    ConfigDict,
+    model_validator
+)
 from typing import Any
+import json
 
 from ..logger import Logger
 
@@ -28,6 +35,7 @@ class ConfigModel(BaseModel):
     points_per_ghost: int = Field(gt=0, default=200)
     seed: int = Field(default=42)
     level_max_time: int = Field(gt=0, default=90)
+    highscore: list[dict[str, int | str]] = Field(default=[])
 
     def __str__(self) -> str:
         return (
@@ -43,6 +51,7 @@ class ConfigModel(BaseModel):
             f"\tPoints per Ghost: {self.points_per_ghost}\n"
             f"\tSeed: {self.seed}\n"
             f"\tLevel max time: {self.level_max_time}\n"
+            f"\tHigh Score: {self.highscore}\n"
             "}\n"
         )
 
@@ -96,3 +105,17 @@ class ConfigModel(BaseModel):
             Logger.warning("'highscore_filename' invalid, using default")
             return cls.model_fields["highscore_filename"].default
         return v
+
+    @model_validator(mode="after")
+    def load_highscore(self):
+        try:
+            with open(self.highscore_filename, "r") as f:
+                self.highscore = sorted(
+                    json.load(f),
+                    key=lambda x: x["score"],
+                    reverse=True
+                )
+        except Exception:
+            Logger.warning("Failed to parse highscore file, using default")
+            self.highscore = []
+        return self
