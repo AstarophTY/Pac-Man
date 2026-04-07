@@ -9,8 +9,7 @@ class Maze_3d():
         for y in range(len(maze)):
             for x in range(len(maze[y])):
                 self.create_walls(x, y)
-        Entity(model='cube', position=((x/2)*scale,0,(-y/2)*scale), color=color.white, scale=((x+1)*scale,0.5,(-y-1)*scale), collider='box')
-
+        Entity(model='cube', position=((x/2)*scale,0,(-y/2)*scale), color=color.white, scale=((x+1)*scale,1,(-y-1)*scale), collider='box')
 
 
     def get_walls(self, val: int) -> None:
@@ -25,10 +24,12 @@ class Maze_3d():
 
 
     def gen_wall(self, position, scale):
+        wall_texture_path = "assets/textures/Walls.jpg"
         return Entity(model='cube',
                       position=(position[0]*self.scale, position[1], position[2]*self.scale),
                       color=color.gray,
                       scale=scale*self.scale,
+                      texture=str(wall_texture_path),
                       collider='box')
 
 
