@@ -27,8 +27,8 @@ def main() -> None:
 
     Logger.debug(str(config))
 
-    run_main_menu(config.highscore)
-    # run_main_maze()
+    # run_main_menu(config.highscore)
+    run_main_maze()
 
 
 if __name__ == "__main__":

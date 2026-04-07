@@ -1,4 +1,4 @@
-from ursina import Entity, color
+from ursina import Entity, color, scene
 
 
 class Maze_3d():
@@ -6,11 +6,14 @@ class Maze_3d():
         self.maze = maze
         self.scale = scale
         self.walls_entity = []
+        self.walls = Entity(parent=scene)
         for y in range(len(maze)):
             for x in range(len(maze[y])):
                 self.create_walls(x, y)
-        Entity(model='cube', position=((x/2)*scale,0,(-y/2)*scale), color=color.white, scale=((x+1)*scale,1,(-y-1)*scale), collider='box')
-
+        self.walls.combine()
+        self.walls.texture = "assets/textures/wall.jpg"
+        self.walls.collider = 'mesh'
+        self.gen_floor(((x/2)*scale,0,(-y/2)*scale),((x+1)*scale,1,(-y-1)*scale))        
 
     def get_walls(self, val: int) -> None:
         bits = f"{int(val):04b}"
@@ -22,15 +25,25 @@ class Maze_3d():
             "NB": val
         }
 
+    def gen_floor(self, position, scale):
+        floor_texture_path = "assets/textures/floor.jpg"
+        return Entity(model='cube',
+                position=position,
+                scale=scale,
+                collider='box',
+                texture=str(floor_texture_path),
+                texture_scale = (5, 5)
+                )
 
     def gen_wall(self, position, scale):
-        wall_texture_path = "assets/textures/Walls.jpg"
+        wall_texture_path = "assets/textures/wall.jpg"
         return Entity(model='cube',
                       position=(position[0]*self.scale, position[1], position[2]*self.scale),
                       color=color.gray,
                       scale=scale*self.scale,
                       texture=str(wall_texture_path),
-                      collider='box')
+                      collider='box',
+                      parent=self.walls)
 
 
     def create_walls(self, x, y):
