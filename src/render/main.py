@@ -3,6 +3,7 @@ from ursina import Ursina, Sky, mouse, DirectionalLight, AmbientLight, Vec3, col
 from ursina.prefabs.first_person_controller import FirstPersonController
 from .maze_3d import Maze_3d
 from .input import InputHandler
+from .minimap import MiniMap
 
 def run_main_maze():
     size = (15, 20)
@@ -17,13 +18,15 @@ def run_main_maze():
     mouse.locked = True
 
     player = FirstPersonController()
-    InputHandler(player)
+    
 
     DirectionalLight().look_at(Vec3(1, -1, -1))
     AmbientLight(color=color.rgba32(100, 100, 100, 255))
 
     scale_maze = 4
     maze_3d = Maze_3d(maze, scale_maze)
+    MiniMap(maze_3d.walls, size)
+    InputHandler(player)
     app.run()
 
 
