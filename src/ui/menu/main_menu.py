@@ -17,6 +17,7 @@ def run_main_menu(highscore: list[dict[str, int | str]]) -> None:
         borderless=False,
         title="Pac-Man",
         color=colors.rgb(0.110, 0.133, 0.227),
+        development_mode=False
     )
 
     window.exit_button.visible = False
