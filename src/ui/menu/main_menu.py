@@ -233,5 +233,3 @@ if __name__ == "__main__":
         {"name": "Player2", "score": 800},
         {"name": "Player3", "score": 600}
     ])
-
-int()
