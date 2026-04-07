@@ -1,9 +1,8 @@
 from mazegenerator import MazeGenerator
-
-from ursina import Ursina, Sky, mouse, DirectionalLight, AmbientLight, Vec3, color
+from ursina import Ursina, Sky, mouse, DirectionalLight, AmbientLight, Vec3, color, Entity
 from ursina.prefabs.first_person_controller import FirstPersonController
 from .maze_3d import Maze_3d
-
+from .input import InputHandler
 
 def run_main_maze():
     size = (15, 20)
@@ -13,12 +12,12 @@ def run_main_maze():
     )
     maze = maze_gen.maze
     app = Ursina()
+    
     Sky()
     mouse.locked = True
 
     player = FirstPersonController()
-    player.speed = 10
-    player.gravity = 0
+    InputHandler(player)
 
     DirectionalLight().look_at(Vec3(1, -1, -1))
     AmbientLight(color=color.rgba32(100, 100, 100, 255))
