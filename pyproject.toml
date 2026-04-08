@@ -5,9 +5,17 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "dotenv>=0.9.9",
+    "flake8>=7.3.0",
     "mazegenerator",
+    "mypy>=1.20.0",
+    "pydantic>=2.12.5",
     "ursina>=8.3.0",
 ]
 
 [tool.uv.sources]
-mazegenerator = { path = "mazegenerator-00001-py3-none-any.whl" }
+mazegenerator = { path = "dependencies/mazegenerator-2.0.1-py3-none-any.whl" }
+
+[[tool.mypy.overrides]]
+module = "ursina.*"
+ignore_missing_imports = true
