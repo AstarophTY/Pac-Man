@@ -12,7 +12,6 @@ class Maze_3d():
                 self.create_walls(x, y)
         self.walls.combine()
         self.walls.texture = "assets/textures/wall.jpg"
-        self.walls.collider = 'mesh'
         self.gen_floor(((x/2)*scale,0,(-y/2)*scale),((x+1)*scale,1,(-y-1)*scale))        
 
     def get_walls(self, val: int) -> None:
@@ -37,12 +36,19 @@ class Maze_3d():
 
     def gen_wall(self, position, scale):
         wall_texture_path = "assets/textures/wall.jpg"
+        
+        # Separate invisible box collider for stable collision
+        Entity(model=None,
+               position=(position[0]*self.scale, position[1], position[2]*self.scale),
+               scale=scale*self.scale,
+               collider='box',
+               visible=False)
+
         return Entity(model='cube',
                       position=(position[0]*self.scale, position[1], position[2]*self.scale),
                       color=color.gray,
                       scale=scale*self.scale,
                       texture=str(wall_texture_path),
-                      collider='box',
                       parent=self.walls)
 
 
