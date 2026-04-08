@@ -1,6 +1,7 @@
 from mazegenerator import MazeGenerator
-from ursina import Ursina, Sky, mouse, DirectionalLight, AmbientLight, Vec3, color, Entity, time, raycast, held_keys, clamp
+from ursina import Ursina, Sky, mouse, DirectionalLight, AmbientLight, Vec3, color, Entity
 from ursina.prefabs.first_person_controller import FirstPersonController
+from ursina import BoxCollider, Vec3
 from .maze_3d import Maze_3d
 from .input import InputHandler
 from .minimap import MiniMap
@@ -18,35 +19,7 @@ def run_main_maze():
     mouse.locked = True
 
     player = FirstPersonController()
-    
-    # Custom update function to prevent FirstPersonController from sticking to walls
-    def custom_update():
-        player.rotation_y += mouse.velocity[0] * player.mouse_sensitivity[1]
-        player.camera_pivot.rotation_x -= mouse.velocity[1] * player.mouse_sensitivity[0]
-        player.camera_pivot.rotation_x = clamp(player.camera_pivot.rotation_x, -90, 90)
-
-        player.direction = Vec3(
-            player.forward * (held_keys['w'] - held_keys['s'])
-            + player.right * (held_keys['d'] - held_keys['a'])
-        ).normalized()
-
-        move_amount = player.direction * time.dt * player.speed
-
-        # Raycast for X axis movement
-        if raycast(player.position + Vec3(0, 0.5, 0), Vec3(1, 0, 0), distance=.5 + max(0, move_amount[0]), traverse_target=player.traverse_target, ignore=player.ignore_list).hit:
-            move_amount[0] = min(move_amount[0], 0)
-        elif raycast(player.position + Vec3(0, 0.5, 0), Vec3(-1, 0, 0), distance=.5 - min(0, move_amount[0]), traverse_target=player.traverse_target, ignore=player.ignore_list).hit:
-            move_amount[0] = max(move_amount[0], 0)
-
-        # Raycast for Z axis movement
-        if raycast(player.position + Vec3(0, 0.5, 0), Vec3(0, 0, 1), distance=.5 + max(0, move_amount[2]), traverse_target=player.traverse_target, ignore=player.ignore_list).hit:
-            move_amount[2] = min(move_amount[2], 0)
-        elif raycast(player.position + Vec3(0, 0.5, 0), Vec3(0, 0, -1), distance=.5 - min(0, move_amount[2]), traverse_target=player.traverse_target, ignore=player.ignore_list).hit:
-            move_amount[2] = max(move_amount[2], 0)
-
-        player.position += move_amount
-
-    player.update = custom_update
+    player.collider = BoxCollider(player, center=Vec3(0, 1, 0), size=Vec3(0.5, 2, 0.5))
     
 
     DirectionalLight().look_at(Vec3(1, -1, -1))
