@@ -19,3 +19,7 @@ mazegenerator = { path = "dependencies/mazegenerator-2.0.1-py3-none-any.whl" }
 [[tool.mypy.overrides]]
 module = "ursina.*"
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "mazegenerator.*"
+ignore_missing_imports = true

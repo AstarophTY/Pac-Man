@@ -3,7 +3,7 @@ from sys import argv
 from .logger import Logger
 from .parsing import ConfigLoader
 from .ui.menu import run_main_menu
-from .render.main import run_main_maze
+# from .render.main import run_main_maze
 
 
 def main() -> None:
@@ -27,8 +27,13 @@ def main() -> None:
 
     Logger.debug(str(config))
 
+<<<<<<< HEAD
     # run_main_menu(config.highscore)
     run_main_maze()
+=======
+    # run_main_maze()
+    run_main_menu(config.highscore)
+>>>>>>> main
 
 
 if __name__ == "__main__":
