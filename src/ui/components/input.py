@@ -44,6 +44,7 @@ class MenuInput(InputField):
             )
         )
 
+        self.character_limit = character_limit
         self.text_field.font = self._font_path
         self.text_field.color = self._base_text_color
         self.text_field.origin = (-0.5, 0)
@@ -149,15 +150,23 @@ class MenuInput(InputField):
             self._label_entity.color = self._base_text_color
 
     def update(self) -> None:
-        if self.active and self._cursor.enabled:
+        if (len(self.text) >= self.character_limit):
+            self._cursor.enabled = False
+        else:
+            self._cursor.enabled = True
+        if (
+            self.active
+            and self._cursor.enabled
+            and len(self.text) < self.character_limit
+        ):
             self._cursor_blink_time += time.dt
             if self._cursor_blink_time >= 0.5:
                 self._cursor_visible = not self._cursor_visible
                 self._cursor.alpha = 1.0 if self._cursor_visible else 0.0
                 self._cursor_blink_time = 0
 
-            text_width = len(self.text) * 0.0405
-            cursor_x = self._left_padding + text_width
+            text_width = len(self.text) * 0.041
+            cursor_x = self._left_padding + text_width + 0.02
             self._cursor.x = min(cursor_x, self._right_padding)
 
     def on_mouse_enter(self) -> None:
@@ -182,7 +191,6 @@ def main() -> None:
         y=0.2,
         default_value="",
         character_limit=21,
-        
     )
 
     app.run()
