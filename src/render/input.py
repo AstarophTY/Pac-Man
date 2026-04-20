@@ -14,7 +14,7 @@ class InputHandler(Entity):
             color=color.yellow,
             scale=(0.125, 0, 0.125),
             position=(0, 1, 0),
-            rotation_y = 90
+            rotation_y=90
         )
 
     def input(self, key):
@@ -24,12 +24,11 @@ class InputHandler(Entity):
     def update(self):
         speed = 10
         self.point.rotation_y += mouse.velocity[0] * 40
-        
+
         if held_keys['c']:
             self.player.y += speed * time.dt
         if held_keys['v']:
             self.player.y -= speed * time.dt
-        
 
         self.point.x = self.player.x
         self.point.z = self.player.z
