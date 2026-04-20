@@ -39,8 +39,8 @@ class MenuInput(InputField):
             color=self._base_color,
             limit_content_to=(
                 "abcdefghijklmnopqrstuvwxyz"
-                + "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                + "_-0123456789"
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                "_-0123456789"
             )
         )
 
