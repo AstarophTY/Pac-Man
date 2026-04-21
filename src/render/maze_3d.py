@@ -1,4 +1,4 @@
-from ursina import Entity, color, scene
+from ursina import Entity, Vec3, color, scene
 
 
 class Maze_3d():
@@ -48,6 +48,22 @@ class Maze_3d():
             scale[2] * self.scale,
         )
 
+        Entity(
+            model=None,
+            position=wall_position,
+            scale=wall_scale,
+            collider='box',
+            visible=False
+        )
+
+        return Entity(
+            model='cube',
+            position=wall_position,
+            color=color.gray,
+            scale=wall_scale,
+            texture=str(wall_texture_path),
+            parent=self.walls
+        )
 
     def create_walls(self, x, y):
         y = -y

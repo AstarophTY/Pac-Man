@@ -24,7 +24,8 @@ class MiniMap(Entity):
             scale=(2, 0, 2),
             position=model.position
         )
-
+            
+    
     def display_pacgums(self, dict):
         for gum in dict.get("normal"):
             self.display_pacgum(gum)
@@ -53,14 +54,15 @@ class MiniMap(Entity):
         self.minimap_walls.rotation_x = -90
 
         self.minimap_walls.position = (
-            0.7 - (center_x * scale_factor),
-            0.3 - (center_z * scale_factor),
-            -0.1
+            self._panel_center_x - (center_x * scale_factor),
+            self._panel_center_y - (center_z * scale_factor),
+            -0.10,
         )
 
         bg_width = model_size.x * scale_factor
         bg_height = model_size.z * scale_factor
-
+ 
+ 
         frame_h = bg_height + 0.08
         inner_w = bg_width + 0.04
         inner_h = bg_height + 0.04
@@ -87,12 +89,12 @@ class MiniMap(Entity):
         )
 
         self.bg = Entity(
-            parent=camera.ui,
+            parent=self,
             model='quad',
             color=color.rgba(0.071, 0.098, 0.169, 0.84),
             scale=(bg_width, bg_height),
-            position=(0.7, 0.3),
-            z=0
+            position=(self._panel_center_x, self._panel_center_y),
+            z=0.01,
         )
 
         self._title = Entity(
