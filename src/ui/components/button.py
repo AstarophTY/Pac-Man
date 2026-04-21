@@ -1,4 +1,4 @@
-from collections.abc import Callable
+from typing import Callable, Optional
 
 from ursina import Button, Entity, Text, color as colors, invoke
 from ursina.curve import linear
@@ -9,7 +9,7 @@ class MenuButton(Button):
         self,
         text: str,
         on_click: Callable[[], None],
-        y: float,
+        y: Optional[float],
         width: float = 0.38,
         height: float = 0.080,
     ) -> None:
@@ -30,8 +30,9 @@ class MenuButton(Button):
 
         self._base_z = 0.0
         self._pressed_z = 0.012
-        self._base_y = y
-        self._pressed_y = y - 0.008
+        if y:
+            self._base_y = y
+            self._pressed_y = y - 0.008
 
         super().__init__(
             text=text,
