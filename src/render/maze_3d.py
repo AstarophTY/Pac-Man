@@ -6,6 +6,7 @@ class Maze_3d():
         self.maze = maze
         self.scale = scale
         self.walls_entity = []
+        self.floors = []
         self.pacgums_zone = []
         self.walls = Entity(parent=scene)
         for y in range(len(maze)):
@@ -17,7 +18,7 @@ class Maze_3d():
         self.gen_floor(x, y, 0, scale)
         self.gen_floor(x, y, 4, scale)
 
-    def get_walls(self, val: int) -> None:
+    def get_walls(self, val: int) -> dict[str, bool | int]:
         bits = f"{int(val):04b}"
         return {
             "NORTH": bits[3] == '1',
@@ -31,7 +32,7 @@ class Maze_3d():
         Entity_position = ((x/2)*scale, hight, (-y/2)*scale)
         Entity_scale = ((x+1)*scale, 1, (-y-1)*scale)
         floor_texture_path = "assets/textures/floor.jpg"
-        return Entity(
+        floor_entity = Entity(
             model='cube',
             position=Entity_position,
             scale=Entity_scale,
@@ -39,6 +40,8 @@ class Maze_3d():
             texture=str(floor_texture_path),
             texture_scale=(5, 5)
             )
+        self.floors.append(floor_entity)
+        return floor_entity
 
     def gen_wall(self, position, scale):
         wall_texture_path = "assets/textures/wall.jpg"
@@ -56,7 +59,8 @@ class Maze_3d():
             position=wall_position,
             scale=wall_scale,
             collider='box',
-            visible=False
+            visible=False,
+            parent=self.walls,
         )
 
         return Entity(

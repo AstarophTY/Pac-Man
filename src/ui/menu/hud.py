@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from ursina import Entity, Text, Ursina, Vec2, camera, color, time
 from ..components.vhs_effect import VHSEffect
 
@@ -12,24 +13,25 @@ def _fmt_time(total_seconds: float) -> str:
 class HUDTemplate(Entity):
     def __init__(
         self,
+        score: int = 0,
         lives: int = 3,
-        battery: float = 100.0,
         level: int = 1,
         remaining_time: float = 120.0,
         countdown: bool = True,
-        recording: bool = True,
+        on_time_finished: Callable[[], None] | None = None,
     ):
         super().__init__(parent=camera.ui)
+        self.score = max(0, int(score))
         self.lives = max(0, int(lives))
-        self.battery = max(0.0, min(100.0, float(battery)))
         self.level = max(1, int(level))
         self.remaining_time = max(0.0, float(remaining_time))
         self.countdown = countdown
-        self.recording = recording
+        self.on_time_finished = on_time_finished
+        self._time_finished_called = self.remaining_time <= 0
 
         font_path = "assets/fonts/PressStart2P-vaV7.ttf"
 
-        self.rec_text = Text(
+        self.score_text = Text(
             parent=self,
             text="",
             position=Vec2(-0.86, 0.46),
@@ -40,7 +42,7 @@ class HUDTemplate(Entity):
         self.time_text = Text(
             parent=self,
             text="",
-            position=Vec2(0.48, 0.46),
+            position=Vec2(0.56, 0.46),
             color=color.white,
             scale=1.0,
             font=font_path,
@@ -67,10 +69,17 @@ class HUDTemplate(Entity):
         self.refresh()
 
     def refresh(self):
-        rec_prefix = "TIME" if self.recording else "OVER"
-        self.rec_text.text = f"{rec_prefix} {_fmt_time(self.remaining_time)}"
-        self.lives_text.text = f"HEALTH {'♥' * self.lives}"
+        self.score_text.text = f"SCORE {self.score:06d}"
+        self.time_text.text = f"TIME {_fmt_time(self.remaining_time)}"
+        self.lives_text.text = f"LIVES {self.lives}"
         self.level_text.text = f"LVL {self.level:02d}"
+
+    def set_score(self, value: int):
+        self.score = max(0, int(value))
+        self.refresh()
+
+    def add_score(self, value: int):
+        self.set_score(self.score + int(value))
 
     def set_lives(self, value: int):
         self.lives = max(0, int(value))
@@ -83,48 +92,41 @@ class HUDTemplate(Entity):
         self.level = max(1, int(value))
         self.refresh()
 
-    def set_battery(self, value: float):
-        self.battery = max(0.0, min(100.0, float(value)))
-        self.refresh()
-
-    def add_battery(self, value: float):
-        self.set_battery(self.battery + float(value))
-
     def set_remaining_time(self, value: float):
         self.remaining_time = max(0.0, float(value))
+        if self.remaining_time > 0:
+            self._time_finished_called = False
         self.refresh()
 
     def add_time(self, value: float):
         self.set_remaining_time(self.remaining_time + float(value))
 
-    def set_recording(self, value: bool):
-        self.recording = bool(value)
-        self.refresh()
-
     def update_hud(
         self,
+        score: int | None = None,
         lives: int | None = None,
-        battery: float | None = None,
         level: int | None = None,
         remaining_time: float | None = None,
-        rec_time: float | None = None,
-        recording: bool | None = None,
     ):
+        if score is not None:
+            self.score = max(0, int(score))
         if lives is not None:
             self.lives = max(0, int(lives))
-        if battery is not None:
-            self.battery = max(0.0, min(100.0, float(battery)))
         if level is not None:
             self.level = max(1, int(level))
         if remaining_time is not None:
             self.remaining_time = max(0.0, float(remaining_time))
-        if recording is not None:
-            self.recording = bool(recording)
+        if self.remaining_time > 0:
+            self._time_finished_called = False
         self.refresh()
 
     def update(self):
         if self.countdown and self.remaining_time > 0:
             self.remaining_time = max(0.0, self.remaining_time - time.dt)
+            if self.remaining_time <= 0 and not self._time_finished_called:
+                self._time_finished_called = True
+                if self.on_time_finished is not None:
+                    self.on_time_finished()
         self.refresh()
 
 
@@ -134,6 +136,10 @@ class _HUDTester(Entity):
         self.hud = hud
 
     def input(self, key):
+        if key == 'p':
+            self.hud.add_score(100)
+        elif key == 'o':
+            self.hud.add_score(-100)
         if key == 'l':
             self.hud.lose_life()
         elif key == 'k':
@@ -142,35 +148,27 @@ class _HUDTester(Entity):
             self.hud.set_level(self.hud.level + 1)
         elif key == 'm':
             self.hud.set_level(self.hud.level - 1)
-        elif key == 'b':
-            self.hud.add_battery(-10)
-        elif key == 'g':
-            self.hud.add_battery(10)
         elif key == 't':
             self.hud.add_time(15)
         elif key == 'y':
             self.hud.add_time(-15)
-        elif key == 'f':
-            self.hud.set_recording(not self.hud.recording)
         elif key == 'r':
             self.hud.update_hud(
+                score=0,
                 lives=3,
-                battery=100,
                 level=1,
                 remaining_time=120,
-                recording=True,
             )
 
 
 def main():
     app = Ursina()
     hud = HUDTemplate(
+        score=0,
         lives=3,
-        battery=100,
         level=1,
         remaining_time=120,
         countdown=True,
-        recording=True,
     )
     _HUDTester(hud)
     app.run()
