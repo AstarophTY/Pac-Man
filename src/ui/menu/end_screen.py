@@ -72,7 +72,7 @@ def _show_end_screen(
         model="quad",
         scale=(0.82, 0.76),
         y=-0.02,
-        z=-0.01,
+        z=1.0,
         color=colors.rgba(0.051, 0.078, 0.141, 0.90),
     )
     ui_entities.append(panel)
@@ -128,7 +128,7 @@ def _show_end_screen(
     status_text = Text(
         parent=camera.ui,
         text="",
-        y=-0.28,
+        y=-0.2,
         z=-0.05,
         origin=(0, 0),
         font=font_path,
@@ -171,17 +171,19 @@ def _show_end_screen(
     save_button = MenuButton(
         text="SAVE SCORE",
         on_click=_save_score,
-        y=-0.38,
+        y=-0.3,
     )
     save_button.z = -0.03
+    save_button.x = 0.2
     ui_entities.append(save_button)
 
     continue_button = MenuButton(
         text="CONTINUE",
         on_click=_close_screen,
-        y=-0.49,
+        y=-0.3,
     )
     continue_button.z = -0.03
+    continue_button.x = -0.2
     ui_entities.append(continue_button)
 
     VHSEffect(0.4)

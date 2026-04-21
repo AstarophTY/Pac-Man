@@ -1,18 +1,14 @@
 [
   {
-    "name": "Saluttoutlemonde",
-    "score": 410
+    "name": "PLAYER1",
+    "score": 10000
+  },
+  {
+    "name": "PLAYER2",
+    "score": 7500
   },
   {
     "name": "PLAYER",
-    "score": 400
-  },
-  {
-    "name": "PLAYER",
-    "score": 400
-  },
-  {
-    "name": "PLAYER",
-    "score": 0
+    "score": 4321
   }
 ]
