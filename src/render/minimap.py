@@ -2,10 +2,11 @@ from ursina import Entity, camera, color, duplicate
 
 
 class MiniMap(Entity):
-    def __init__(self, walls, size, map_scale):
+    def __init__(self, maze_3d, size, map_scale):
         super().__init__(parent=camera.ui)
         self.map_scale = map_scale
-        self.display_minimap(walls, map_scale)
+        self.player_spawn = maze_3d.player_spawn
+        self.display_minimap(maze_3d.walls, map_scale)
 
     def display_minimap(self, walls, scale):
         self.minimap_walls = duplicate(walls)
@@ -86,7 +87,7 @@ class MiniMap(Entity):
             model='pacman.obj',
             color=color.yellow,
             scale=(0.125, 0, 0.125),
-            position=(0, 1, 0),
+            position=self.player_spawn,
             rotation_y=90
         )
 

@@ -18,7 +18,6 @@ from ursina import (
 class PlayerController(Entity):
     def __init__(
         self,
-        position=Vec3(0, 0, 0),
         speed=10,
         collider_size=Vec3(0.34, 2, 0.34),
         eye_height=1.6,
@@ -28,7 +27,7 @@ class PlayerController(Entity):
         mini_map=None,
         pacgums=None
     ):
-        super().__init__(position=position)
+        super().__init__()
         self.speed = speed
         self.gravity = 0
         self.collider_size = collider_size
@@ -41,7 +40,7 @@ class PlayerController(Entity):
         self._breath_t = 0.0
         self._base_camera_y = self.eye_height
         self._current_breath_offset = 0.0
-        self.position = position
+        self.position = mini_map.player_spawn
 
         self.camera_pivot = Entity(parent=self, y=self.eye_height)
         camera.parent = self.camera_pivot
