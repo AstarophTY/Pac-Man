@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-from ursina import color, Entity, camera, duplicate
-
-class MiniMap():
-    def __init__(self, walls, size, scale):
-        self.minimap_walls = duplicate(walls)
-        self.minimap_walls.parent = camera.ui
-=======
 from ursina import Entity, camera, color, duplicate
 
 
@@ -32,8 +24,7 @@ class MiniMap(Entity):
             scale=(2, 0, 2),
             position=model.position
         )
-            
-    
+
     def display_pacgums(self, dict):
         for gum in dict.get("normal"):
             self.display_pacgum(gum)
@@ -46,26 +37,20 @@ class MiniMap(Entity):
         self._panel_center_x = 0.7
         self._panel_center_y = 0.3
 
->>>>>>> 4da2e00 (pacgums display, map and 3d + pacman inb the map)
         min_bound, max_bound = self.minimap_walls.getTightBounds()
         model_size = max_bound - min_bound
         center_x = (max_bound.x + min_bound.x) / 2
         center_z = (max_bound.z + min_bound.z) / 2
-        
+
         max_dim = max(model_size.x, model_size.z)
         scale_factor = scale / max_dim
-        
+
         self.minimap_walls.scale = (scale_factor, 0.1, scale_factor)
-        
+
         self.minimap_walls.texture = None
-<<<<<<< HEAD
-        self.minimap_walls.color = color.black
-=======
         self.minimap_walls.color = color.rgb(0.729, 0.980, 1.000)
->>>>>>> 4da2e00 (pacgums display, map and 3d + pacman inb the map)
         self.minimap_walls.collider = None
         self.minimap_walls.rotation_x = -90
-
 
         self.minimap_walls.position = (
             0.7 - (center_x * scale_factor),
@@ -75,10 +60,7 @@ class MiniMap(Entity):
 
         bg_width = model_size.x * scale_factor
         bg_height = model_size.z * scale_factor
-<<<<<<< HEAD
-=======
- 
- 
+
         frame_h = bg_height + 0.08
         inner_w = bg_width + 0.04
         inner_h = bg_height + 0.04
@@ -103,23 +85,15 @@ class MiniMap(Entity):
             ),
             z=0.02,
         )
->>>>>>> 4da2e00 (pacgums display, map and 3d + pacman inb the map)
 
         self.bg = Entity(
             parent=camera.ui,
             model='quad',
-<<<<<<< HEAD
-            color=color.white,
-=======
             color=color.rgba(0.071, 0.098, 0.169, 0.84),
->>>>>>> 4da2e00 (pacgums display, map and 3d + pacman inb the map)
             scale=(bg_width, bg_height),
             position=(0.7, 0.3),
             z=0
         )
-<<<<<<< HEAD
-    
-=======
 
         self._title = Entity(
             parent=self,
@@ -133,6 +107,5 @@ class MiniMap(Entity):
             z=0.03,
         )
 
->>>>>>> 4da2e00 (pacgums display, map and 3d + pacman inb the map)
     def get_ui_map(self):
         return self.minimap_walls

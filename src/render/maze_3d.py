@@ -41,29 +41,12 @@ class Maze_3d():
 
     def gen_wall(self, position, scale):
         wall_texture_path = "assets/textures/wall.jpg"
-<<<<<<< HEAD
-        
-        # Separate invisible box collider for stable collision
-        Entity(model=None,
-               position=(position[0]*self.scale, position[1], position[2]*self.scale),
-               scale=scale*self.scale,
-               collider='box',
-               visible=False)
-
-        return Entity(model='cube',
-                      position=(position[0]*self.scale, position[1], position[2]*self.scale),
-                      color=color.gray,
-                      scale=scale*self.scale,
-                      texture=str(wall_texture_path),
-                      parent=self.walls)
-=======
         wall_position = (position[0] * self.scale, position[1], position[2] * self.scale)
         wall_scale = Vec3(
             scale[0] * self.scale,
             scale[1] * self.scale,
             scale[2] * self.scale,
         )
->>>>>>> 4da2e00 (pacgums display, map and 3d + pacman inb the map)
 
 
     def create_walls(self, x, y):

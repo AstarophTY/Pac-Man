@@ -16,7 +16,6 @@ class HUDTemplate(Entity):
         battery: float = 100.0,
         level: int = 1,
         remaining_time: float = 120.0,
-        rec_time: float = 0.0,
         countdown: bool = True,
         recording: bool = True,
     ):
@@ -25,7 +24,6 @@ class HUDTemplate(Entity):
         self.battery = max(0.0, min(100.0, float(battery)))
         self.level = max(1, int(level))
         self.remaining_time = max(0.0, float(remaining_time))
-        self.rec_time = max(0.0, float(rec_time))
         self.countdown = countdown
         self.recording = recording
 
@@ -103,10 +101,6 @@ class HUDTemplate(Entity):
         self.recording = bool(value)
         self.refresh()
 
-    def set_rec_time(self, value: float):
-        self.rec_time = max(0.0, float(value))
-        self.refresh()
-
     def update_hud(
         self,
         lives: int | None = None,
@@ -124,15 +118,11 @@ class HUDTemplate(Entity):
             self.level = max(1, int(level))
         if remaining_time is not None:
             self.remaining_time = max(0.0, float(remaining_time))
-        if rec_time is not None:
-            self.rec_time = max(0.0, float(rec_time))
         if recording is not None:
             self.recording = bool(recording)
         self.refresh()
 
     def update(self):
-        if self.recording:
-            self.rec_time += time.dt
         if self.countdown and self.remaining_time > 0:
             self.remaining_time = max(0.0, self.remaining_time - time.dt)
         self.refresh()
@@ -168,7 +158,6 @@ class _HUDTester(Entity):
                 battery=100,
                 level=1,
                 remaining_time=120,
-                rec_time=0,
                 recording=True,
             )
 
@@ -180,7 +169,6 @@ def main():
         battery=100,
         level=1,
         remaining_time=120,
-        rec_time=0,
         countdown=True,
         recording=True,
     )
