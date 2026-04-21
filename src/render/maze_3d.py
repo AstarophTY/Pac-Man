@@ -13,7 +13,7 @@ class Maze_3d():
                 self.create_walls(x, y)
         self.walls.combine()
         self.walls.texture = "assets/textures/wall.jpg"
-        self.player_spawn = Vec3((x/2)*scale,0, (-y/2)*scale)
+        self.player_spawn = Vec3((x/2)*scale, 0, (-y/2)*scale)
         self.gen_floor(x, y, 0, scale)
         self.gen_floor(x, y, 4, scale)
 
@@ -29,19 +29,22 @@ class Maze_3d():
 
     def gen_floor(self, x, y, hight, scale):
         Entity_position = ((x/2)*scale, hight, (-y/2)*scale)
-        Entity_scale = ((x+1)*scale,1,(-y-1)*scale)
+        Entity_scale = ((x+1)*scale, 1, (-y-1)*scale)
         floor_texture_path = "assets/textures/floor.jpg"
-        return Entity(model='cube',
-                position=Entity_position,
-                scale=Entity_scale,
-                collider='box',
-                texture=str(floor_texture_path),
-                texture_scale = (5, 5)
-                )
+        return Entity(
+            model='cube',
+            position=Entity_position,
+            scale=Entity_scale,
+            collider='box',
+            texture=str(floor_texture_path),
+            texture_scale=(5, 5)
+            )
 
     def gen_wall(self, position, scale):
         wall_texture_path = "assets/textures/wall.jpg"
-        wall_position = (position[0] * self.scale, position[1], position[2] * self.scale)
+        wall_position = (position[0] * self.scale,
+                         position[1],
+                         position[2] * self.scale)
         wall_scale = Vec3(
             scale[0] * self.scale,
             scale[1] * self.scale,
@@ -73,25 +76,29 @@ class Maze_3d():
             return
         else:
             self.pacgums_zone.append((x, y))
-            if walls.get('NORTH') is True and not (x*self.scale, 2, (y+0.5)*self.scale) in pos:
+            if (walls.get('NORTH') is True and
+               not (x*self.scale, 2, (y+0.5)*self.scale) in pos):
                 self.walls_entity.append(
-                    self.gen_wall((x, 2, (y+0.5)),(1.2, 1, 0.2))
+                    self.gen_wall((x, 2, (y+0.5)), (1.2, 1, 0.2))
                 )
-            if walls.get('SOUTH') is True and not (x*self.scale, 2, (y-0.5)*self.scale) in pos:
+            if (walls.get('SOUTH') is True and
+               not (x*self.scale, 2, (y-0.5)*self.scale) in pos):
                 self.walls_entity.append(
                     self.gen_wall(
                         (x, 2, (y-0.5)),
                         (1.2, 1, 0.2)
                     )
                 )
-            if walls.get('EAST') is True and not ((x+0.5)*self.scale, 2, y*self.scale) in pos:
+            if (walls.get('EAST') is True and
+               not ((x+0.5)*self.scale, 2, y*self.scale) in pos):
                 self.walls_entity.append(
                     self.gen_wall(
                         ((x+0.5), 2, y),
                         (0.2, 1, 1.2)
                     )
                 )
-            if walls.get('WEST') is True and not ((x-0.5)*self.scale, 2, y*self.scale) in pos:
+            if (walls.get('WEST') is True and
+               not ((x-0.5)*self.scale, 2, y*self.scale) in pos):
                 self.walls_entity.append(
                     self.gen_wall(
                         ((x-0.5), 2, y),

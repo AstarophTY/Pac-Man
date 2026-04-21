@@ -2,35 +2,10 @@ from ursina import Entity, camera, color, duplicate
 
 
 class MiniMap(Entity):
-    def __init__(self, walls, size, scale, pacgums_all):
+    def __init__(self, walls, size, map_scale):
         super().__init__(parent=camera.ui)
-        self.display_minimap(walls, scale)
-        self.display_pacgums(pacgums_all.pacgums)
-
-    def display_pacgum(self, model):
-        pacgum = Entity(
-            parent=self.minimap_walls,
-            model='sphere',
-            color=color.white,
-            scale=(1, 0, 1),
-            position=model.position
-        )
-
-    def display_super_pacgums(self, model):
-        super = Entity(
-            parent=self.minimap_walls,
-            model='sphere',
-            color=color.white,
-            scale=(2, 0, 2),
-            position=model.position
-        )
-            
-    
-    def display_pacgums(self, dict):
-        for gum in dict.get("normal"):
-            self.display_pacgum(gum)
-        for super in dict.get("super"):
-            self.display_super_pacgums(super)
+        self.map_scale = map_scale
+        self.display_minimap(walls, map_scale)
 
     def display_minimap(self, walls, scale):
         self.minimap_walls = duplicate(walls)
@@ -61,8 +36,6 @@ class MiniMap(Entity):
 
         bg_width = model_size.x * scale_factor
         bg_height = model_size.z * scale_factor
- 
- 
         frame_h = bg_height + 0.08
         inner_w = bg_width + 0.04
         inner_h = bg_height + 0.04
