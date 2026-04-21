@@ -81,6 +81,14 @@ class MiniMap(Entity):
             ),
             z=0.03,
         )
+        self.player = Entity(
+            parent=self.minimap_walls,
+            model='pacman.obj',
+            color=color.yellow,
+            scale=(0.125, 0, 0.125),
+            position=(0, 1, 0),
+            rotation_y=90
+        )
 
     def get_ui_map(self):
         return self.minimap_walls

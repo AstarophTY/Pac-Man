@@ -12,7 +12,6 @@ from ursina import (
     scene,
 )
 from .maze_3d import Maze_3d
-from .input import InputHandler
 from .minimap import MiniMap
 from .player_controller import PlayerController
 from .pacgums import Pacgums_Manager
@@ -65,15 +64,6 @@ class MazeGameSession(Entity):
         for floor in self.maze_3d.floors:
             self._destroyables.append(floor)
 
-        self.player = PlayerController(
-            position=self.maze_3d.player_spawn,
-            speed=10,
-            collider_size=Vec3(0.34, 2, 0.34),
-            eye_height=2.0,
-            fov=90,
-        )
-        self._destroyables.append(self.player)
-
         self.mini_map = MiniMap(self.maze_3d.walls, size, 0.4)
         self._destroyables.append(self.mini_map)
 
@@ -84,20 +74,23 @@ class MazeGameSession(Entity):
             self.mini_map,
         )
 
-        self.input_handler = InputHandler(
-            self.player,
-            self.mini_map,
-            self.pacgums,
-        )
-        self._destroyables.append(self.input_handler)
-        self._destroyables.append(self.input_handler.point)
-
         self._normal_left = sum(
             1 for gum in self.pacgums.pacgums.get("normal", []) if gum.visible
         )
         self._super_left = sum(
             1 for gum in self.pacgums.pacgums.get("super", []) if gum.visible
         )
+
+        self.player = PlayerController(
+            position=self.maze_3d.player_spawn,
+            speed=10,
+            collider_size=Vec3(0.34, 2, 0.34),
+            eye_height=2.0,
+            fov=90,
+            mini_map=self.mini_map,
+            pacgums=self.pacgums.pacgums
+        )
+        self._destroyables.append(self.player)
 
     def _build_hud(self) -> None:
         self.hud = HUDTemplate(

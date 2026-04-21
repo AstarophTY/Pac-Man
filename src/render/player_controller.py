@@ -25,6 +25,8 @@ class PlayerController(Entity):
         fov=100,
         mouse_sensitivity=Vec2(40, 40),
         skin_width=0.04,
+        mini_map=None,
+        pacgums=None
     ):
         super().__init__(position=position)
         self.speed = speed
@@ -34,9 +36,12 @@ class PlayerController(Entity):
         self.fov = fov
         self.mouse_sensitivity = mouse_sensitivity
         self.skin_width = skin_width
+        self.mini_map = mini_map
+        self.pacgums = pacgums
         self._breath_t = 0.0
         self._base_camera_y = self.eye_height
         self._current_breath_offset = 0.0
+        self.position = position
 
         self.camera_pivot = Entity(parent=self, y=self.eye_height)
         camera.parent = self.camera_pivot
@@ -103,15 +108,42 @@ class PlayerController(Entity):
 
             self._move_axis('x', world_move.x)
             self._move_axis('z', world_move.z)
+            self._minimap_move_player()
 
+        self._minimap_rotate_player()
+        self._handle_pacgums_collisions()
         self._apply_breathing(is_moving)
+
+    def _handle_pacgums_collisions(self):
+        for gum in self.pacgums.get('normal'):
+            gum_pos = gum.model.position
+            if (self.position.x <= gum_pos.x + 1 and
+               self.position.x >= gum_pos.x - 1 and
+               self.position.z <= gum_pos.z + 1 and
+               self.position.z >= gum_pos.z - 1):
+                gum.hide()
+
+        for gum in self.pacgums.get('super'):
+            gum_pos = gum.model.position
+            if (self.position.x <= gum_pos.x + 2 and
+               self.position.x >= gum_pos.x - 2 and
+               self.position.z <= gum_pos.z + 2 and
+               self.position.z >= gum_pos.z - 2):
+                gum.hide()
+
+    def _minimap_move_player(self):
+        self.mini_map.player.x = self.position.x
+        self.mini_map.player.z = self.position.z
+
+    def _minimap_rotate_player(self):
+        self.mini_map.player.rotation_y += mouse.velocity[0] * 40
 
     def _apply_breathing(self, is_moving):
         if is_moving:
-            frequency = 8.0
+            frequency = 16.0
             amplitude = 0.028
         else:
-            frequency = 1.9
+            frequency = 3.8
             amplitude = 0.008
 
         self._breath_t += time.dt * frequency
