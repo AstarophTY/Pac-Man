@@ -10,6 +10,7 @@ from ursina import (
     destroy,
     mouse,
     scene,
+    camera
 )
 from .maze_3d import Maze_3d
 from .minimap import MiniMap
@@ -31,7 +32,6 @@ class MazeGameSession(Entity):
         self.on_victory = on_victory
         self.ended = False
         self.score = 0
-        self._destroyables: list[Entity] = []
 
         self._build_world()
         self._build_hud()
@@ -47,25 +47,18 @@ class MazeGameSession(Entity):
         maze = maze_gen.maze
 
         self.sky = Sky()
-        self._destroyables.append(self.sky)
 
         mouse.locked = True
 
         self.sun = DirectionalLight()
         self.sun.look_at(Vec3(1, -1, -1))
-        self._destroyables.append(self.sun)
 
         self.ambient = AmbientLight(color=color.rgba32(100, 100, 100, 255))
-        self._destroyables.append(self.ambient)
 
         scale_maze = 4
         self.maze_3d = Maze_3d(maze, scale_maze)
-        self._destroyables.append(self.maze_3d.walls)
-        for floor in self.maze_3d.floors:
-            self._destroyables.append(floor)
 
         self.mini_map = MiniMap(self.maze_3d, size, 0.4)
-        self._destroyables.append(self.mini_map)
 
         self.pacgums = Pacgums_Manager(
             scale_maze,
@@ -89,7 +82,6 @@ class MazeGameSession(Entity):
             mini_map=self.mini_map,
             pacgums=self.pacgums.pacgums
         )
-        self._destroyables.append(self.player)
 
     def _build_hud(self) -> None:
         self.hud = HUDTemplate(
@@ -100,7 +92,6 @@ class MazeGameSession(Entity):
             countdown=True,
             on_time_finished=self._time_up,
         )
-        self._destroyables.append(self.hud)
 
     def _time_up(self) -> None:
         if self.ended:
@@ -113,7 +104,7 @@ class MazeGameSession(Entity):
 
     def _freeze_gameplay(self) -> None:
         self.player.enabled = False
-        self.input_handler.enabled = False
+        # self.input_handler.enabled = False
         self.hud.countdown = False
 
     def _sync_score(self) -> None:
@@ -160,8 +151,9 @@ class MazeGameSession(Entity):
             destroy(gum.model)
             destroy(gum.sprite)
 
-        for entity in self._destroyables:
-            destroy(entity)
+        for entity in scene.entities:
+            if entity not in (camera, camera.ui):
+                destroy(entity)
 
         destroy(self)
 
