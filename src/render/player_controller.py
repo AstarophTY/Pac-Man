@@ -1,5 +1,5 @@
 import math
-from typing import Callable
+
 from ursina import (
     BoxCollider,
     Entity,
@@ -26,7 +26,7 @@ class PlayerController(Entity):
         skin_width=0.04,
         mini_map=None,
         pacgums=None,
-        hit_ghost
+        hit_ghost=None,
     ):
         super().__init__()
         self.speed = speed
@@ -38,11 +38,16 @@ class PlayerController(Entity):
         self.skin_width = skin_width
         self.mini_map = mini_map
         self.pacgums = pacgums
+        self.hit_ghost = hit_ghost
         self._breath_t = 0.0
         self._base_camera_y = self.eye_height
         self._current_breath_offset = 0.0
         self.position = mini_map.player_spawn
-        self.hit_ghost=hit_ghost
+        self.spawn_position = Vec3(
+            self.position.x,
+            self.position.y,
+            self.position.z,
+        )
 
         self.camera_pivot = Entity(parent=self, y=self.eye_height)
         camera.parent = self.camera_pivot
@@ -64,7 +69,10 @@ class PlayerController(Entity):
         if delta < 0:
             direction = -direction
 
-        half_width = self.collider_size.x / 2 if axis == 'x' else self.collider_size.z / 2
+        if axis == 'x':
+            half_width = self.collider_size.x / 2
+        else:
+            half_width = self.collider_size.z / 2
         distance = half_width + abs(delta) + self.skin_width
 
         origins = (
@@ -83,10 +91,6 @@ class PlayerController(Entity):
             )
 
             if hit.hit and not getattr(hit.entity, 'is_trigger', False):
-                self.hit_ghost()
-                return True
-
-            if hit.hit and getattr(hit.entity, 'is_trigger', False):
                 return True
 
         return False
@@ -98,8 +102,14 @@ class PlayerController(Entity):
 
     def update(self):
         self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[0]
-        self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[1]
-        self.camera_pivot.rotation_x = clamp(self.camera_pivot.rotation_x, -89, 89)
+        self.camera_pivot.rotation_x -= (
+            mouse.velocity[1] * self.mouse_sensitivity[1]
+        )
+        self.camera_pivot.rotation_x = clamp(
+            self.camera_pivot.rotation_x,
+            -89,
+            89,
+        )
 
         move_input = Vec3(
             held_keys['d'] - held_keys['a'],
@@ -110,7 +120,11 @@ class PlayerController(Entity):
 
         if is_moving:
             move_input = move_input.normalized() * self.speed * time.dt
-            world_move = (self.right * move_input.x) + (self.forward * move_input.z)
+            world_move = (
+                self.right * move_input.x
+            ) + (
+                self.forward * move_input.z
+            )
 
             self._move_axis('x', world_move.x)
             self._move_axis('z', world_move.z)
@@ -158,3 +172,13 @@ class PlayerController(Entity):
             target_offset - self._current_breath_offset
         ) * min(1.0, time.dt * 12.0)
         self.camera_pivot.y = self._base_camera_y + self._current_breath_offset
+
+    def reset_to_spawn(self):
+        self.position = Vec3(
+            self.spawn_position.x,
+            self.spawn_position.y,
+            self.spawn_position.z,
+        )
+        self.rotation = Vec3(0, 0, 0)
+        self.camera_pivot.rotation_x = 0
+        self._minimap_move_player()
