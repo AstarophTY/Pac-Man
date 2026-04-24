@@ -35,6 +35,10 @@ def run_main_menu(config) -> None:
 
 
 def _build_menu_ui(app: Ursina, config) -> None:
+    for entity in scene.entities:
+        if entity != camera and entity != camera.ui:
+            destroy(entity)
+
     highscore = getattr(config, "highscore", config)
     highscore_filename = getattr(
         config,
