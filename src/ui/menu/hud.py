@@ -42,7 +42,7 @@ class HUDTemplate(Entity):
         self.time_text = Text(
             parent=self,
             text="",
-            position=Vec2(0.56, 0.46),
+            position=Vec2(0.56, 0.075),
             color=color.white,
             scale=1.0,
             font=font_path,

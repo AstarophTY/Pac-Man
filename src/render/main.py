@@ -16,6 +16,7 @@ from .maze_3d import Maze_3d
 from .minimap import MiniMap
 from .player_controller import PlayerController
 from .pacgums import Pacgums_Manager
+from ..ghosts.ghost import Blinky
 from ..ui.menu.hud import HUDTemplate
 
 
@@ -83,6 +84,10 @@ class MazeGameSession(Entity):
             pacgums=self.pacgums.pacgums
         )
 
+        self.blinky = Blinky(spawn_coords=(0, 1), tile_size=scale_maze)
+        self.blinky.position += Vec3(self.player.position.x, 0, self.player.position.z)
+        print(self.player.position.x)
+
     def _build_hud(self) -> None:
         self.hud = HUDTemplate(
             score=0,
@@ -104,7 +109,6 @@ class MazeGameSession(Entity):
 
     def _freeze_gameplay(self) -> None:
         self.player.enabled = False
-        # self.input_handler.enabled = False
         self.hud.countdown = False
 
     def _sync_score(self) -> None:

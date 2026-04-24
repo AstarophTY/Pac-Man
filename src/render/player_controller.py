@@ -1,5 +1,5 @@
 import math
-
+from typing import Callable
 from ursina import (
     BoxCollider,
     Entity,
@@ -25,7 +25,8 @@ class PlayerController(Entity):
         mouse_sensitivity=Vec2(40, 40),
         skin_width=0.04,
         mini_map=None,
-        pacgums=None
+        pacgums=None,
+        hit_ghost
     ):
         super().__init__()
         self.speed = speed
@@ -41,6 +42,7 @@ class PlayerController(Entity):
         self._base_camera_y = self.eye_height
         self._current_breath_offset = 0.0
         self.position = mini_map.player_spawn
+        self.hit_ghost=hit_ghost
 
         self.camera_pivot = Entity(parent=self, y=self.eye_height)
         camera.parent = self.camera_pivot
@@ -79,7 +81,12 @@ class PlayerController(Entity):
                 ignore=(self,),
                 traverse_target=scene,
             )
-            if hit.hit:
+
+            if hit.hit and not getattr(hit.entity, 'is_trigger', False):
+                self.hit_ghost()
+                return True
+
+            if hit.hit and getattr(hit.entity, 'is_trigger', False):
                 return True
 
         return False
